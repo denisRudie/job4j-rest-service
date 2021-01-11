@@ -1,10 +1,12 @@
 package ru.job4j.auth.controller;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.job4j.auth.model.Person;
+import ru.job4j.auth.model.Views;
 import ru.job4j.auth.repository.PersonRepository;
 
 import java.util.List;
@@ -23,6 +25,7 @@ public class PersonController {
     }
 
     @GetMapping("/")
+    @JsonView(Views.EmpDataAndAccFull.class)
     public List<Person> findAll() {
         return StreamSupport.stream(
                 repository.findAll().spliterator(), false)
@@ -30,7 +33,8 @@ public class PersonController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Person> findById(@PathVariable int id) {
+    @JsonView(Views.EmpDataAndAccFull.class)
+    public ResponseEntity<Person> findById(@PathVariable("id") int id) {
         var person = repository.findById(id);
         return new ResponseEntity<>(
                 person.orElse(new Person()),
@@ -39,6 +43,7 @@ public class PersonController {
     }
 
     @PostMapping("/")
+    @JsonView(Views.EmpDataAndAccFull.class)
     public ResponseEntity<Person> create(@RequestBody Person person) {
         return new ResponseEntity<>(
                 repository.save(person),
